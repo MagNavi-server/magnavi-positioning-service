@@ -82,9 +82,8 @@ MagNavi는 스마트폰 센서만을 활용하여
 ## 📊 성능
 
 - 정확도: **72.5% → 97.3%**
-- 목표 오차: **1m 이내**
-- KCI 논문 게재
-🔗 [논문(DBpia)](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12567180) | 
+- 목표 오차: **1m 이내 달성**
+
 ---
 
 ## 📸 Demo
@@ -98,4 +97,4 @@ MagNavi는 스마트폰 센서만을 활용하여
 
 - 🥇 캡스톤 디자인 1위  
 - 🏆 MIDAS CDP 최우수상  
-- 📄 KCI 학술지 게재  
+- 📄 KCI 학술지 게재  🔗 [논문(DBpia)](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12567180) | 
