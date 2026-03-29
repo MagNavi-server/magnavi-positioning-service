@@ -44,8 +44,12 @@ MagNavi는 스마트폰 센서만을 활용하여
 ## 🏗️ 시스템 아키텍처
 
 <p align="center">
-  <img src="./assets/architecture.png" alt="MagNavi Architecture" width="900"/>
+  <img src="image/마그내비 아키텍쳐.drawio.png" alt="MagNavi Architecture" width="900"/>
 </p>
+<p align="center">
+  <img src="image/마그내비3.drawio.png" alt="MagNavi Architecture" width="900"/>
+</p>
+
 
 - Mobile App에서 센서 데이터 수집
 - 딥러닝 모델이 위치 예측 수행
@@ -77,24 +81,15 @@ MagNavi는 스마트폰 센서만을 활용하여
 - 정확도: **72.5% → 97.3%**
 - 목표 오차: **1m 이내**
 - KCI 논문 게재
-
+🔗 [논문(DBpia)](https://www.dbpia.co.kr/journal/articleDetail?nodeId=NODE12567180) | 
 ---
 
 ## 📸 Demo
 
-```
-![demo](./assets/demo.gif)
-```
+[Demo 영상](https://www.youtube.com/watch?v=kqR17mF1d1U)
 
 ---
 
-## 🧭 Architecture
-
-```
-![architecture](./assets/architecture.png)
-```
-
----
 
 ## 🏆 성과
 
