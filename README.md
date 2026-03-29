@@ -43,7 +43,14 @@ MagNavi는 스마트폰 센서만을 활용하여
 
 ## 🏗️ 시스템 아키텍처
 
+<p align="center">
+  <img src="./assets/architecture.png" alt="MagNavi Architecture" width="900"/>
+</p>
 
+- Mobile App에서 센서 데이터 수집
+- 딥러닝 모델이 위치 예측 수행
+- PDR 기반 이동 추정 및 보정
+- 최종 실내 위치 반환
 ---
 
 ## ⚙️ 주요 기능
