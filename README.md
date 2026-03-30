@@ -31,6 +31,14 @@ MagNavi는 스마트폰 센서만을 활용하여
 - 딥러닝 모델이 위치 예측 수행
 - PDR 기반 이동 추정 및 보정
 - 최종 실내 위치 반환
+  
+<p>
+<img src="https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white" />
+<img src="https://img.shields.io/badge/FastAPI-009688?style=for-the-badge&logo=fastapi&logoColor=white" />
+<img src="https://img.shields.io/badge/MySQL-4479A1?style=for-the-badge&logo=mysql&logoColor=white" />
+<img src="https://img.shields.io/badge/AWS-232F3E?style=for-the-badge&logo=amazonaws&logoColor=white" />
+</p>
+ 
 ---
 
 
