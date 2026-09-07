@@ -1,0 +1,1 @@
+# magnavi-positioning-service
