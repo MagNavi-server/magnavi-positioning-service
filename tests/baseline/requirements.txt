@@ -1,0 +1,21 @@
+# 기존 requirements.txt에서 추론과 SensorInput 로딩에 필요한 버전만 가져온다.
+# 서버·DB를 실행하는 환경이 아닌, 예측 비교 전용 환경이다.
+annotated-types==0.7.0
+dnspython==2.7.0
+email-validator==2.3.0
+idna==3.10
+joblib==1.5.1
+numpy==2.3.0
+pandas==2.3.0
+pydantic==2.11.7
+pydantic_core==2.33.2
+python-dateutil==2.9.0.post0
+pytz==2025.2
+PyWavelets==1.9.0
+scikit-learn==1.7.0
+scipy==1.15.3
+six==1.17.0
+threadpoolctl==3.6.0
+typing-inspection==0.4.1
+typing_extensions==4.14.0
+tzdata==2025.2
