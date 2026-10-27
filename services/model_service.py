@@ -1,103 +1,52 @@
-# -*- coding: utf-8 -*-
-# 온라인 전처리(윈도우+웨이브렛)와 100% 동일한 방식으로 실사용 예측
+"""검증된 모델 묶음과 측정 세션으로 기존 전처리·추론 계산을 수행한다."""
 
-import os
-import joblib
+from pathlib import Path
+from typing import Optional, Tuple
+
 import numpy as np
-from typing import Tuple, Optional, Dict, Any
 import pywt
-from collections import deque
-import schemas
 
-# -------------------------------
-# 경로 및 파일 (수정 완료)
-# -------------------------------
-# 현재 파일의 위치를 기준으로 프로젝트 루트 폴더를 찾아서 모델 경로를 설정합니다.
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-MODEL_DIR = os.path.join(project_root, "model")
+from schemas.prediction import SensorInput
+from .model_loader import MODEL_DIR, ModelBundle
+from .model_runtime import ModelRuntime
+from .prediction_errors import InvalidSensorInputError, PredictionFailedError
+from .prediction_session import MAGNETIC_AXES, PredictionSession
 
-MODEL_PATHS = {
-    "mlp": os.path.join(MODEL_DIR, "mlp_model_6input.pkl"),
-    "scaler": os.path.join(MODEL_DIR, "scaler.pkl"),
-    "label_encoder": os.path.join(MODEL_DIR, "label_encoder_6input.pkl"),
-    "soft_iron": os.path.join(MODEL_DIR, "soft_iron_matrix.pkl"),
-    "hard_iron": os.path.join(MODEL_DIR, "bias.pkl"),
-    "preproc_params": os.path.join(MODEL_DIR, "preproc_params.pkl"),
-    #"wavelet_sigma": os.path.join(MODEL_DIR, "wavelet_sigma.pkl"),
-}
 
-# -------------------------------
-# 기본 파라미터
-# -------------------------------
-DEFAULT_PARAMS = {
-    "wavelet": "db4",
-    "level": 1,
-    "thresh_mode": "soft",
-    "window_size": 16,
-    "hop_size": 1,
-    "border_mode": "symmetric",
-    "strategy": "adaptive",
-    "warmup_policy": "pad",
-    "min_fill_ratio": 0.5,
-}
-
-MAG_COLS = ["Mag_X", "Mag_Y", "Mag_Z"]
+MAG_COLS = list(MAGNETIC_AXES)
 ORI_COLS = ["Ori_X", "Ori_Y", "Ori_Z"]
 FEATURE_COLS = MAG_COLS + ORI_COLS
+# 객체 생성은 파일을 읽지 않는다. 서버 lifespan 또는 검증 도구가 명시적으로 준비한다.
+_runtime = ModelRuntime()
 
-# -------------------------------
-# 로드
-# -------------------------------
-models: Dict[str, Any] = {}
-PREPROC_PARAMS = DEFAULT_PARAMS.copy()
-FIXED_SIGMA = None
-BUFFERS: Dict[str, deque] = {}
-MODEL_LOADED = False
 
-try:
-    for k, p in MODEL_PATHS.items():
-        if os.path.exists(p):
-            models[k] = joblib.load(p)
-            print(f"✅ 로드: {os.path.basename(p)}")
+def initialize_model(model_dir: Path = MODEL_DIR) -> None:
+    """공용 모델을 명시적으로 준비하며 실패하면 호출자에게 예외를 전달한다."""
+    _runtime.start(model_dir)
 
-    required = ["mlp", "scaler", "label_encoder", "soft_iron", "hard_iron"]
-    if not all(k in models for k in required):
-        missing = [k for k in required if k not in models]
-        raise FileNotFoundError(f"필수 모델 파일 누락: {missing}")
 
-    if "preproc_params" in models:
-        PREPROC_PARAMS.update(models["preproc_params"])
-        print("✅ 전처리 파라미터 적용:", PREPROC_PARAMS)
-    else:
-        print("ℹ️ preproc_params.pkl 없음 → 기본 파라미터 사용:", PREPROC_PARAMS)
+def shutdown_model() -> None:
+    """모델의 신규 사용을 막고 연결된 세션을 정리한다."""
+    _runtime.stop()
 
-    if PREPROC_PARAMS.get("strategy", "adaptive") == "fixed" and "wavelet_sigma" in models:
-        FIXED_SIGMA = models["wavelet_sigma"]
-        print("✅ wavelet_sigma 적용(고정 임계):", {k: v.get("uthresh") for k, v in FIXED_SIGMA.items()})
-    else:
-        print("ℹ️ adaptive 모드 또는 wavelet_sigma 미존재")
 
-    BUFFERS = {c: deque(maxlen=int(PREPROC_PARAMS["window_size"])) for c in MAG_COLS}
-    MODEL_LOADED = True
-    print("🚀 모든 모델 컴포넌트(6-input) 로드 완료")
-except Exception as e:
-    print(f"❌ 모델 로드 실패: {e}")
-
-# -------------------------------
-# 유틸
-# -------------------------------
 def get_model_status() -> dict:
-    return {
-        "status": "ok" if MODEL_LOADED else "error",
-        "model_loaded": MODEL_LOADED,
-        "model_name": "MLP 6-input (Hard/Soft-Iron + Windowed Wavelet + Scaler)",
-        "feature_cols": FEATURE_COLS if MODEL_LOADED else None,
-        "wavelet_strategy": PREPROC_PARAMS.get("strategy"),
-        "window_size": PREPROC_PARAMS.get("window_size"),
-        "warmup_policy": PREPROC_PARAMS.get("warmup_policy"),
-    }
+    """복사된 전역 불리언 대신 실제 런타임의 현재 상태를 조회한다."""
+    return _runtime.status()
+
+
+def create_prediction_session() -> PredictionSession:
+    """준비된 모델의 윈도우 크기로 측정 연결 하나에 쓸 빈 세션을 생성한다."""
+    return _runtime.create_session()
+
+
+def run_prediction(data: SensorInput, session: PredictionSession) -> Tuple[Optional[int], list, list]:
+    """입력 검증과 준비 상태·세션 수명을 확인한 후 기존 계산을 실행한다."""
+    return _runtime.predict(data, session)
+
 
 def extract_location_id(label_str):
+    """기존 라벨의 위치 코드를 추출하며 기존 실패 시 0 반환 규칙을 유지한다."""
     try:
         return int(str(label_str).split("_")[0])
     except (ValueError, IndexError):
@@ -106,15 +55,16 @@ def extract_location_id(label_str):
         except Exception:
             return 0
 
-def _wavelet_denoise_window(x: np.ndarray, col_name: str) -> np.ndarray:
-    wavelet = PREPROC_PARAMS["wavelet"]
-    level = int(PREPROC_PARAMS["level"])
-    mode = PREPROC_PARAMS["thresh_mode"]
-    border = PREPROC_PARAMS["border_mode"]
+def _wavelet_denoise_window(x: np.ndarray, col_name: str, bundle: ModelBundle) -> np.ndarray:
+    """기존 설정과 계산 순서를 유지해 한 축의 자기장 윈도우를 필터링한다."""
+    wavelet = bundle.preprocessing["wavelet"]
+    level = int(bundle.preprocessing["level"])
+    mode = bundle.preprocessing["thresh_mode"]
+    border = bundle.preprocessing["border_mode"]
     coeffs = pywt.wavedec(x, wavelet=wavelet, level=level, mode=border)
 
-    if PREPROC_PARAMS.get("strategy", "adaptive") == "fixed" and FIXED_SIGMA and FIXED_SIGMA.get(col_name):
-        uthresh = float(FIXED_SIGMA[col_name].get("uthresh", 0.0))
+    if bundle.preprocessing.get("strategy", "adaptive") == "fixed" and bundle.fixed_sigma and bundle.fixed_sigma.get(col_name):
+        uthresh = float(bundle.fixed_sigma[col_name].get("uthresh", 0.0))
         if uthresh <= 0: return x
     else:
         d = coeffs[-1]
@@ -127,11 +77,12 @@ def _wavelet_denoise_window(x: np.ndarray, col_name: str) -> np.ndarray:
     y = pywt.waverec(den, wavelet=wavelet, mode=border)
     return y[:len(x)]
 
-def _latest_value_with_warmup(col_name: str) -> float:
-    window_size = int(PREPROC_PARAMS["window_size"])
-    policy = PREPROC_PARAMS.get("warmup_policy", "pad")
-    ratio = float(PREPROC_PARAMS.get("min_fill_ratio", 0.5))
-    buf = np.array(BUFFERS[col_name], dtype=float)
+def _latest_value_with_warmup(col_name: str, session: PredictionSession, bundle: ModelBundle) -> float:
+    """해당 세션의 윈도우에 기존 워밍업 정책을 적용해 최신 값을 계산한다."""
+    window_size = int(bundle.preprocessing["window_size"])
+    policy = bundle.preprocessing.get("warmup_policy", "pad")
+    ratio = float(bundle.preprocessing.get("min_fill_ratio", 0.5))
+    buf = np.array(session.window_values(col_name), dtype=float)
     n = len(buf)
 
     if (policy == "wait" and n < window_size) or \
@@ -144,16 +95,14 @@ def _latest_value_with_warmup(col_name: str) -> float:
     else:
         x = buf[-window_size:]
 
-    y = _wavelet_denoise_window(x, col_name)
+    y = _wavelet_denoise_window(x, col_name, bundle)
     return float(y[-1])
 
-# -------------------------------
-# 예측 진입점
-# -------------------------------
-def run_prediction(data: schemas.SensorInput) -> Tuple[Optional[int], list, list]:
-    if not MODEL_LOADED:
-        raise RuntimeError("Model components are not loaded properly.")
-
+def _predict_in_session(
+    data: SensorInput, session: PredictionSession, bundle: ModelBundle
+) -> Tuple[Optional[int], list, list]:
+    """세션 잠금 안에서 기존 보정·웨이브렛·스케일링·추론 순서를 실행한다."""
+    models = bundle.components
     sample = data.model_dump()
 
     for c in MAG_COLS:
@@ -164,21 +113,26 @@ def run_prediction(data: schemas.SensorInput) -> Tuple[Optional[int], list, list
     for i, c in enumerate(MAG_COLS):
         sample[c] = mag_vec[i]
 
-    for c in MAG_COLS:
-        BUFFERS[c].append(sample[c])
+    if not np.isfinite(mag_vec).all():
+        raise InvalidSensorInputError("보정 결과를 유한한 수치로 표현할 수 없습니다.")
+    session.append_magnetic_sample(sample)
 
-    window_size = int(PREPROC_PARAMS["window_size"])
-    policy = PREPROC_PARAMS.get("warmup_policy", "pad")
-    n_now = min(len(BUFFERS[c]) for c in MAG_COLS)
+    window_size = int(bundle.preprocessing["window_size"])
+    policy = bundle.preprocessing.get("warmup_policy", "pad")
+    n_now = session.buffered_count
 
     if policy == "wait" and n_now < window_size:
         return None, [], []
 
-    latest = {c: _latest_value_with_warmup(c) for c in MAG_COLS}
+    latest = {c: _latest_value_with_warmup(c, session, bundle) for c in MAG_COLS}
     
     feature_vec = np.array([latest[c] for c in MAG_COLS] + [sample[c] for c in ORI_COLS]).reshape(1, -1)
     
+    if not np.isfinite(feature_vec).all():
+        raise InvalidSensorInputError("전처리 결과를 유한한 수치로 표현할 수 없습니다.")
     scaled = models["scaler"].transform(feature_vec)
+    if not np.isfinite(scaled).all():
+        raise InvalidSensorInputError("변환한 입력을 유한한 수치로 표현할 수 없습니다.")
     
     mlp = models["mlp"]
     pred_idx = mlp.predict(scaled)[0]
@@ -189,6 +143,8 @@ def run_prediction(data: schemas.SensorInput) -> Tuple[Optional[int], list, list
     top_results_for_logging, top_results_for_response = [], []
     if hasattr(mlp, "predict_proba"):
         proba = mlp.predict_proba(scaled)[0]
+        if not np.isfinite(proba).all() or np.any(proba < 0) or np.any(proba > 1):
+            raise PredictionFailedError("모델이 유효하지 않은 후보 점수를 반환했습니다.")
         num_candidates = min(len(proba), 15)
         top_indices = np.argsort(-proba)[:num_candidates]
         raw_top = models["label_encoder"].inverse_transform(top_indices)

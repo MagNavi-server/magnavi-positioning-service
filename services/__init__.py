@@ -1,5 +1,11 @@
-# services 폴더의 주요 함수들을 패키지 레벨로 가져옵니다.
-# 이렇게 하면 다른 파일에서 from services.model_service import run_prediction 대신
-# from services import run_prediction 처럼 간단하게 임포트할 수 있습니다.
-# 웨이브렛 코드 적용하면서 추가
-from .model_service import run_prediction, MODEL_LOADED, get_model_status
+"""세션 기반 추론과 기존 HTTP 호환 진입점을 구분해 제공한다."""
+
+from .model_service import (
+    create_prediction_session,
+    get_model_status,
+    initialize_model,
+    run_prediction,
+    shutdown_model,
+)
+from .prediction_session import PredictionSession, PredictionSessionClosedError
+from .legacy_prediction_service import run_legacy_prediction

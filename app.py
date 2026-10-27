@@ -1,19 +1,26 @@
 from fastapi import FastAPI
+from contextlib import asynccontextmanager
 import logging
 from database import engine, Base
 # 새로 만든 prediction_router를 임포트 목록에 추가합니다.
 from routers import favorites_router, locations_router, user_router, prediction_router, outdoor_places_router
-# services 임포트는 이제 app.py에서 직접 사용하지 않으므로 삭제해도 됩니다.
-# import schemas도 직접 사용하지 않으므로 삭제 가능합니다.
+from services.model_lifecycle import model_lifespan
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:     %(message)s')
 
-Base.metadata.create_all(bind=engine)
+@asynccontextmanager
+async def application_lifespan(application: FastAPI):
+    """모델 준비 후 기존 DB 초기화를 수행하며 시작 실패 때도 모델 자원을 정리한다."""
+    async with model_lifespan(application):
+        # 업무 기능 이관 전까지 초기화는 유지하되 import만으로 DB에 쓰지 않는다.
+        Base.metadata.create_all(bind=engine)
+        yield
 
 app = FastAPI(
     title="Midas API - Refactored",
     description="전체 프로젝트 구조가 개선된 API 서버입니다.",
     version="10.0.0",
+    lifespan=application_lifespan,
 )
 
 # --- 라우터 등록 ---
