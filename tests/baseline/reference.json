@@ -1,0 +1,4741 @@
+{
+  "schema_version": 1,
+  "created_at": "2026-10-15T22:24:49.215494+09:00",
+  "purpose": "합성 입력에 대한 기존 추론 동작 비교. 실제 위치 정확도·성능 기준이 아님.",
+  "git_revision": "d82ac754b69496f6921e9954b0ea1d1dd373a0d0",
+  "source_sha256": {
+    "services/__init__.py": "fc0c335885a9516293460e0bd0b08b519f6af4e28a3a0c83668bc15bc16561e6",
+    "services/model_service.py": "2905172c374b07ab95b0bb87a6c88484657c8c2436ac4e78313facd27ef70623",
+    "schemas/__init__.py": "1e63c0ec2b0a9f475688a792967b37fc68856009bdd4969f5f38eb9e55436c21",
+    "schemas/favorite.py": "8187f4fdaea77fa5f5970e7ecfe4bf89c22423cef36695be6483c9f9a66c69d4",
+    "schemas/location.py": "e666b1e4b2b81a67a0a1755a1f624b2bb48f1003cfd4d07a5f304dacf304b278",
+    "schemas/outdoor_place.py": "fe93b3b0fb4aa6bee36fb3269fd58c21925cf315a89ddb1ceb075f2966027560",
+    "schemas/prediction.py": "8ca16bb1dce7c0d633983047c5421410fcdf262972f5b1e9b5aed7c5254e7518",
+    "schemas/user.py": "e50023886dc41527d358cc0e4f932dc28d4a42910a60d67fa984c54cee85e254",
+    "requirements.txt": "278c140451dc29d85ac0acba91f5e5e314c1c740e0b41eb2952549b8640ed687",
+    "tests/baseline/prediction_baseline.py": "944bd63d521b82a7feeff71d21565399b338202aacaac931825b17a77007d321"
+  },
+  "environment": {
+    "python": "3.12.14",
+    "implementation": "CPython",
+    "platform": "darwin",
+    "machine": "arm64",
+    "packages": {
+      "annotated-types": "0.7.0",
+      "dnspython": "2.7.0",
+      "email-validator": "2.3.0",
+      "idna": "3.10",
+      "joblib": "1.5.1",
+      "numpy": "2.3.0",
+      "pandas": "2.3.0",
+      "pydantic": "2.11.7",
+      "pydantic_core": "2.33.2",
+      "python-dateutil": "2.9.0.post0",
+      "pytz": "2025.2",
+      "PyWavelets": "1.9.0",
+      "scikit-learn": "1.7.0",
+      "scipy": "1.15.3",
+      "six": "1.17.0",
+      "threadpoolctl": "3.6.0",
+      "typing-inspection": "0.4.1",
+      "typing_extensions": "4.14.0",
+      "tzdata": "2025.2"
+    }
+  },
+  "files": {
+    "models": {
+      "mlp_model_6input.pkl": "4f762c1d5c6ccbd69ed8bc02d27e8a8636f5104a45feef147ba5680fc560fe16",
+      "scaler.pkl": "29d55b51a8875cad4badc89e2fe213a470be6ae7528cf58808cc06ff129ddd5d",
+      "label_encoder_6input.pkl": "7d4391b27af3b98db2c2db506df068b3e6d1ef66e16de2fb5a21aa250aff2b12",
+      "bias.pkl": "c4d6897da6681067213527e43573a7c844773c577bcfad7985d166b18065d0e9",
+      "soft_iron_matrix.pkl": "0c1dca43417cc83c53fc03be064933cc33384ecd5595427f638128a4f1a56adf",
+      "preproc_params.pkl": "c423b7c267e5eda3aec59f2321f4d47fb8e39560d30c239e1235848f92480b28"
+    },
+    "inputs_sha256": "473109c6a31077f0a6712a2c8ee449f1ece498a03038a531650c18582d4b5485"
+  },
+  "comparison": {
+    "relative_tolerance": 1e-09,
+    "absolute_tolerance": 1e-12
+  },
+  "warnings": [
+    {
+      "category": "InconsistentVersionWarning",
+      "message": "Trying to unpickle estimator LabelBinarizer from version 1.5.1 when using version 1.7.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "count": 1
+    },
+    {
+      "category": "InconsistentVersionWarning",
+      "message": "Trying to unpickle estimator LabelEncoder from version 1.5.1 when using version 1.7.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "count": 1
+    },
+    {
+      "category": "InconsistentVersionWarning",
+      "message": "Trying to unpickle estimator MLPClassifier from version 1.5.1 when using version 1.7.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "count": 1
+    },
+    {
+      "category": "InconsistentVersionWarning",
+      "message": "Trying to unpickle estimator StandardScaler from version 1.5.1 when using version 1.7.0. This might lead to breaking code or invalid results. Use at your own risk. For more info please refer to:\nhttps://scikit-learn.org/stable/model_persistence.html#security-maintainability-limitations",
+      "count": 1
+    },
+    {
+      "category": "RuntimeWarning",
+      "message": "divide by zero encountered in matmul",
+      "count": 1152
+    },
+    {
+      "category": "RuntimeWarning",
+      "message": "invalid value encountered in matmul",
+      "count": 1152
+    },
+    {
+      "category": "RuntimeWarning",
+      "message": "overflow encountered in matmul",
+      "count": 1152
+    },
+    {
+      "category": "UserWarning",
+      "message": "X does not have valid feature names, but StandardScaler was fitted with feature names",
+      "count": 144
+    }
+  ],
+  "results": {
+    "preprocessing": {
+      "wavelet": "db4",
+      "level": 1,
+      "thresh_mode": "soft",
+      "window_size": 16,
+      "hop_size": 1,
+      "border_mode": "symmetric",
+      "strategy": "adaptive",
+      "warmup_policy": "pad",
+      "min_fill_ratio": 0.5
+    },
+    "fixed_sigma_loaded": false,
+    "cases": [
+      {
+        "id": "constant",
+        "samples": [
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 1
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 2
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 3
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 4
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 5
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 6
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 7
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 8
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 9
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 10
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 11
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 12
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 13
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 14
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 15
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999494363038
+              ],
+              [
+                29,
+                5.0563696333035294e-08
+              ],
+              [
+                3,
+                2.626255212626857e-26
+              ]
+            ],
+            "buffered_count": 16
+          }
+        ]
+      },
+      {
+        "id": "smooth_variation",
+        "samples": [
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.999999666797478
+              ],
+              [
+                29,
+                3.332025202213646e-07
+              ],
+              [
+                3,
+                1.7564086714219795e-15
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.999999666797478
+              ],
+              [
+                29,
+                3.332025202213646e-07
+              ],
+              [
+                3,
+                1.7564086714219795e-15
+              ]
+            ],
+            "buffered_count": 1
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.999999999949339
+              ],
+              [
+                29,
+                5.066100585892239e-11
+              ],
+              [
+                3,
+                7.322662062178553e-18
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.999999999949339
+              ],
+              [
+                29,
+                5.066100585892239e-11
+              ],
+              [
+                3,
+                7.322662062178553e-18
+              ]
+            ],
+            "buffered_count": 2
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999999999918
+              ],
+              [
+                29,
+                8.305063315969669e-15
+              ],
+              [
+                3,
+                4.55691458471755e-21
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999999999918
+              ],
+              [
+                29,
+                8.305063315969669e-15
+              ],
+              [
+                3,
+                4.55691458471755e-21
+              ]
+            ],
+            "buffered_count": 3
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                3.8199983398748114e-18
+              ],
+              [
+                27,
+                3.0202511916910095e-18
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                3.8199983398748114e-18
+              ],
+              [
+                27,
+                3.0202511916910095e-18
+              ]
+            ],
+            "buffered_count": 4
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.999999999999986
+              ],
+              [
+                27,
+                1.3980091062864195e-14
+              ],
+              [
+                29,
+                9.560628494836458e-21
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.999999999999986
+              ],
+              [
+                27,
+                1.3980091062864195e-14
+              ],
+              [
+                29,
+                9.560628494836458e-21
+              ]
+            ],
+            "buffered_count": 5
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999999999136
+              ],
+              [
+                27,
+                8.626721948827247e-14
+              ],
+              [
+                29,
+                1.4051487332324236e-22
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999999999136
+              ],
+              [
+                27,
+                8.626721948827247e-14
+              ],
+              [
+                29,
+                1.4051487332324236e-22
+              ]
+            ],
+            "buffered_count": 6
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999999999998
+              ],
+              [
+                27,
+                2.1679211999519666e-16
+              ],
+              [
+                29,
+                1.7582168007517283e-22
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999999999998
+              ],
+              [
+                27,
+                2.1679211999519666e-16
+              ],
+              [
+                29,
+                1.7582168007517283e-22
+              ]
+            ],
+            "buffered_count": 7
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                6.7503123465397025e-22
+              ],
+              [
+                27,
+                7.478513494132885e-23
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                6.7503123465397025e-22
+              ],
+              [
+                27,
+                7.478513494132885e-23
+              ]
+            ],
+            "buffered_count": 8
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                6.529267736710387e-21
+              ],
+              [
+                3,
+                1.9072975509202375e-30
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                6.529267736710387e-21
+              ],
+              [
+                3,
+                1.9072975509202375e-30
+              ]
+            ],
+            "buffered_count": 9
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                1.7653784844228969e-19
+              ],
+              [
+                3,
+                1.6585601889666156e-33
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                1.7653784844228969e-19
+              ],
+              [
+                3,
+                1.6585601889666156e-33
+              ]
+            ],
+            "buffered_count": 10
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                2.3633767128485258e-17
+              ],
+              [
+                3,
+                2.495316902828218e-36
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                2.3633767128485258e-17
+              ],
+              [
+                3,
+                2.495316902828218e-36
+              ]
+            ],
+            "buffered_count": 11
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999999987801
+              ],
+              [
+                29,
+                1.2200233210661744e-12
+              ],
+              [
+                3,
+                1.752578873158675e-35
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999999987801
+              ],
+              [
+                29,
+                1.2200233210661744e-12
+              ],
+              [
+                3,
+                1.752578873158675e-35
+              ]
+            ],
+            "buffered_count": 12
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999244403789
+              ],
+              [
+                29,
+                7.555962099235647e-08
+              ],
+              [
+                3,
+                1.621300223727346e-34
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999244403789
+              ],
+              [
+                29,
+                7.555962099235647e-08
+              ],
+              [
+                3,
+                1.621300223727346e-34
+              ]
+            ],
+            "buffered_count": 13
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9995314152235388
+              ],
+              [
+                29,
+                0.00046858477646112215
+              ],
+              [
+                3,
+                1.2655287016077127e-34
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9995314152235388
+              ],
+              [
+                29,
+                0.00046858477646112215
+              ],
+              [
+                3,
+                1.2655287016077127e-34
+              ]
+            ],
+            "buffered_count": 14
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.7155596332345441
+              ],
+              [
+                28,
+                0.2844403667654559
+              ],
+              [
+                3,
+                1.1280817126067407e-34
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.7155596332345441
+              ],
+              [
+                28,
+                0.2844403667654559
+              ],
+              [
+                3,
+                1.1280817126067407e-34
+              ]
+            ],
+            "buffered_count": 15
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9996666232043763
+              ],
+              [
+                28,
+                0.00033337679562371576
+              ],
+              [
+                3,
+                4.1199105240214363e-36
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9996666232043763
+              ],
+              [
+                28,
+                0.00033337679562371576
+              ],
+              [
+                3,
+                4.1199105240214363e-36
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999896677356517
+              ],
+              [
+                28,
+                1.0332264348428093e-05
+              ],
+              [
+                3,
+                1.6708394984368777e-35
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999896677356517
+              ],
+              [
+                28,
+                1.0332264348428093e-05
+              ],
+              [
+                3,
+                1.6708394984368777e-35
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999692286771573
+              ],
+              [
+                28,
+                3.077132284267185e-05
+              ],
+              [
+                3,
+                3.8840162267020457e-32
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999692286771573
+              ],
+              [
+                28,
+                3.077132284267185e-05
+              ],
+              [
+                3,
+                3.8840162267020457e-32
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9912577055845201
+              ],
+              [
+                28,
+                0.008742294415479886
+              ],
+              [
+                3,
+                4.7649515955816585e-26
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9912577055845201
+              ],
+              [
+                28,
+                0.008742294415479886
+              ],
+              [
+                3,
+                4.7649515955816585e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9652096014933573
+              ],
+              [
+                29,
+                0.03479039850664268
+              ],
+              [
+                3,
+                5.047506042146139e-21
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9652096014933573
+              ],
+              [
+                29,
+                0.03479039850664268
+              ],
+              [
+                3,
+                5.047506042146139e-21
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999803091414
+              ],
+              [
+                29,
+                1.969085851251364e-08
+              ],
+              [
+                3,
+                4.0234126241048716e-18
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999803091414
+              ],
+              [
+                29,
+                1.969085851251364e-08
+              ],
+              [
+                3,
+                4.0234126241048716e-18
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999999957787
+              ],
+              [
+                3,
+                3.4119400847057727e-12
+              ],
+              [
+                29,
+                8.083726345812749e-13
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999999957787
+              ],
+              [
+                3,
+                3.4119400847057727e-12
+              ],
+              [
+                29,
+                8.083726345812749e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9996548034376197
+              ],
+              [
+                27,
+                0.0003411476797410952
+              ],
+              [
+                3,
+                4.048882638509815e-06
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9996548034376197
+              ],
+              [
+                27,
+                0.0003411476797410952
+              ],
+              [
+                3,
+                4.048882638509815e-06
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999998365523542
+              ],
+              [
+                28,
+                1.6294860333114375e-07
+              ],
+              [
+                3,
+                4.990425857172637e-10
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999998365523542
+              ],
+              [
+                28,
+                1.6294860333114375e-07
+              ],
+              [
+                3,
+                4.990425857172637e-10
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999999999999933
+              ],
+              [
+                3,
+                5.5893286086615396e-15
+              ],
+              [
+                28,
+                1.0112329309916884e-15
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999999999999933
+              ],
+              [
+                3,
+                5.5893286086615396e-15
+              ],
+              [
+                28,
+                1.0112329309916884e-15
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                3,
+                2.745160356559475e-17
+              ],
+              [
+                28,
+                5.976261415135597e-20
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                3,
+                2.745160356559475e-17
+              ],
+              [
+                28,
+                5.976261415135597e-20
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                3,
+                3.3245168043692783e-17
+              ],
+              [
+                28,
+                2.2624420588766006e-20
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                3,
+                3.3245168043692783e-17
+              ],
+              [
+                28,
+                2.2624420588766006e-20
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999999999999956
+              ],
+              [
+                3,
+                4.5486963761724546e-15
+              ],
+              [
+                28,
+                1.7944053292154257e-17
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999999999999956
+              ],
+              [
+                3,
+                4.5486963761724546e-15
+              ],
+              [
+                28,
+                1.7944053292154257e-17
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999999999475642
+              ],
+              [
+                3,
+                4.477214651729414e-11
+              ],
+              [
+                28,
+                7.66366363456829e-12
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999999999475642
+              ],
+              [
+                3,
+                4.477214651729414e-11
+              ],
+              [
+                28,
+                7.66366363456829e-12
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.8921893692930049
+              ],
+              [
+                28,
+                0.10705608719611029
+              ],
+              [
+                3,
+                0.0007545435108255608
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.8921893692930049
+              ],
+              [
+                28,
+                0.10705608719611029
+              ],
+              [
+                3,
+                0.0007545435108255608
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999838452301004
+              ],
+              [
+                3,
+                1.6149229809105482e-05
+              ],
+              [
+                29,
+                5.3434481508314795e-09
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999838452301004
+              ],
+              [
+                3,
+                1.6149229809105482e-05
+              ],
+              [
+                29,
+                5.3434481508314795e-09
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9994820253011547
+              ],
+              [
+                29,
+                0.0005168951570979043
+              ],
+              [
+                3,
+                1.0795417474654545e-06
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9994820253011547
+              ],
+              [
+                29,
+                0.0005168951570979043
+              ],
+              [
+                3,
+                1.0795417474654545e-06
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9958791623288378
+              ],
+              [
+                28,
+                0.0041208349541457835
+              ],
+              [
+                3,
+                2.71701650040237e-09
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9958791623288378
+              ],
+              [
+                28,
+                0.0041208349541457835
+              ],
+              [
+                3,
+                2.71701650040237e-09
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999999983540104
+              ],
+              [
+                28,
+                1.64598953728254e-09
+              ],
+              [
+                3,
+                6.284927162602714e-17
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999999983540104
+              ],
+              [
+                28,
+                1.64598953728254e-09
+              ],
+              [
+                3,
+                6.284927162602714e-17
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999999999968237
+              ],
+              [
+                28,
+                3.1762444498913558e-12
+              ],
+              [
+                3,
+                3.075875107378186e-23
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999999999968237
+              ],
+              [
+                28,
+                3.1762444498913558e-12
+              ],
+              [
+                3,
+                3.075875107378186e-23
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999999999965665
+              ],
+              [
+                28,
+                3.4333917161586824e-12
+              ],
+              [
+                3,
+                2.4968917147792042e-27
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999999999965665
+              ],
+              [
+                28,
+                3.4333917161586824e-12
+              ],
+              [
+                3,
+                2.4968917147792042e-27
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999999999555114
+              ],
+              [
+                28,
+                4.448854488897869e-11
+              ],
+              [
+                3,
+                4.465904349420825e-30
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999999999555114
+              ],
+              [
+                28,
+                4.448854488897869e-11
+              ],
+              [
+                3,
+                4.465904349420825e-30
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9999999758199937
+              ],
+              [
+                28,
+                2.4180006366644654e-08
+              ],
+              [
+                3,
+                4.075698828361092e-31
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9999999758199937
+              ],
+              [
+                28,
+                2.4180006366644654e-08
+              ],
+              [
+                3,
+                4.075698828361092e-31
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.9964102547076662
+              ],
+              [
+                28,
+                0.0035897452923339375
+              ],
+              [
+                3,
+                2.6203002272076376e-29
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.9964102547076662
+              ],
+              [
+                28,
+                0.0035897452923339375
+              ],
+              [
+                3,
+                2.6203002272076376e-29
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9990211631504815
+              ],
+              [
+                29,
+                0.0009788368495184554
+              ],
+              [
+                3,
+                7.150483610487327e-28
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9990211631504815
+              ],
+              [
+                29,
+                0.0009788368495184554
+              ],
+              [
+                3,
+                7.150483610487327e-28
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999997589748
+              ],
+              [
+                29,
+                2.410253098544618e-10
+              ],
+              [
+                3,
+                1.7984100271252814e-27
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999997589748
+              ],
+              [
+                29,
+                2.410253098544618e-10
+              ],
+              [
+                3,
+                1.7984100271252814e-27
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                2.8101874105378695e-18
+              ],
+              [
+                27,
+                6.233152666846409e-25
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                1.0
+              ],
+              [
+                29,
+                2.8101874105378695e-18
+              ],
+              [
+                27,
+                6.233152666846409e-25
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999999999953
+              ],
+              [
+                27,
+                4.64105212700848e-15
+              ],
+              [
+                29,
+                2.3863120855178917e-24
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999999999953
+              ],
+              [
+                27,
+                4.64105212700848e-15
+              ],
+              [
+                29,
+                2.3863120855178917e-24
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999027497447233
+              ],
+              [
+                27,
+                9.725025527674521e-05
+              ],
+              [
+                3,
+                1.1352372162428004e-22
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999027497447233
+              ],
+              [
+                27,
+                9.725025527674521e-05
+              ],
+              [
+                3,
+                1.1352372162428004e-22
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999833833503667
+              ],
+              [
+                28,
+                1.6616649633384997e-05
+              ],
+              [
+                3,
+                1.0472586810741699e-24
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999833833503667
+              ],
+              [
+                28,
+                1.6616649633384997e-05
+              ],
+              [
+                3,
+                1.0472586810741699e-24
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999999992924582
+              ],
+              [
+                28,
+                7.075417318924251e-10
+              ],
+              [
+                3,
+                4.162463459089081e-26
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999999992924582
+              ],
+              [
+                28,
+                7.075417318924251e-10
+              ],
+              [
+                3,
+                4.162463459089081e-26
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999999999973492
+              ],
+              [
+                28,
+                2.6508065311518885e-12
+              ],
+              [
+                3,
+                8.044724821968069e-25
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999999999973492
+              ],
+              [
+                28,
+                2.6508065311518885e-12
+              ],
+              [
+                3,
+                8.044724821968069e-25
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                0.9999999999875566
+              ],
+              [
+                28,
+                1.2443420352318215e-11
+              ],
+              [
+                3,
+                1.7459836284955763e-21
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                0.9999999999875566
+              ],
+              [
+                28,
+                1.2443420352318215e-11
+              ],
+              [
+                3,
+                1.7459836284955763e-21
+              ]
+            ],
+            "buffered_count": 16
+          }
+        ]
+      },
+      {
+        "id": "step_changes",
+        "samples": [
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 1
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 2
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 3
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 4
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 5
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 6
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 7
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 8
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 9
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 10
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 11
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 12
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 13
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 14
+          },
+          {
+            "prediction": 28,
+            "logging_candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "candidates": [
+              [
+                28,
+                0.9999999998965703
+              ],
+              [
+                29,
+                1.034297132590879e-10
+              ],
+              [
+                3,
+                2.0138759364405375e-37
+              ]
+            ],
+            "buffered_count": 15
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                1,
+                3.455433906850598e-35
+              ],
+              [
+                6,
+                8.090259178968506e-37
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                1,
+                3.455433906850598e-35
+              ],
+              [
+                6,
+                8.090259178968506e-37
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 27,
+            "logging_candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                1,
+                3.455433906850942e-35
+              ],
+              [
+                6,
+                8.090259178968965e-37
+              ]
+            ],
+            "candidates": [
+              [
+                27,
+                1.0
+              ],
+              [
+                1,
+                3.455433906850942e-35
+              ],
+              [
+                6,
+                8.090259178968965e-37
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184787
+              ],
+              [
+                22,
+                0.0037621987701053857
+              ],
+              [
+                6,
+                0.0006014661021602631
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184787
+              ],
+              [
+                22,
+                0.0037621987701053857
+              ],
+              [
+                6,
+                0.0006014661021602631
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184787
+              ],
+              [
+                22,
+                0.0037621987701055
+              ],
+              [
+                6,
+                0.0006014661021602716
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184787
+              ],
+              [
+                22,
+                0.0037621987701055
+              ],
+              [
+                6,
+                0.0006014661021602716
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9986946912471028
+              ],
+              [
+                22,
+                0.0013036490176988767
+              ],
+              [
+                6,
+                1.659734760301449e-06
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9986946912471028
+              ],
+              [
+                22,
+                0.0013036490176988767
+              ],
+              [
+                6,
+                1.659734760301449e-06
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053406
+              ],
+              [
+                6,
+                0.0006014661021602442
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053406
+              ],
+              [
+                6,
+                0.0006014661021602442
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.939225415470948
+              ],
+              [
+                6,
+                0.0374102953647806
+              ],
+              [
+                22,
+                0.023364166059192122
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.939225415470948
+              ],
+              [
+                6,
+                0.0374102953647806
+              ],
+              [
+                22,
+                0.023364166059192122
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184789
+              ],
+              [
+                22,
+                0.0037621987701053467
+              ],
+              [
+                6,
+                0.0006014661021602333
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184789
+              ],
+              [
+                22,
+                0.0037621987701053467
+              ],
+              [
+                6,
+                0.0006014661021602333
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 14,
+            "logging_candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "candidates": [
+              [
+                14,
+                0.9956363344184791
+              ],
+              [
+                22,
+                0.0037621987701053007
+              ],
+              [
+                6,
+                0.000601466102160225
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067506e-13
+              ],
+              [
+                27,
+                5.904253849932911e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067506e-13
+              ],
+              [
+                27,
+                5.904253849932911e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932408e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932408e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067365e-13
+              ],
+              [
+                27,
+                5.904253849933331e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067365e-13
+              ],
+              [
+                27,
+                5.904253849933331e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.92514221606694e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.92514221606694e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.92514221606694e-13
+              ],
+              [
+                27,
+                5.904253849932491e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.92514221606694e-13
+              ],
+              [
+                27,
+                5.904253849932491e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.9251422160668e-13
+              ],
+              [
+                27,
+                5.904253849931736e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.9251422160668e-13
+              ],
+              [
+                27,
+                5.904253849931736e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          },
+          {
+            "prediction": 29,
+            "logging_candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "candidates": [
+              [
+                29,
+                0.999999999998417
+              ],
+              [
+                28,
+                9.925142216067082e-13
+              ],
+              [
+                27,
+                5.904253849932156e-13
+              ]
+            ],
+            "buffered_count": 16
+          }
+        ]
+      }
+    ]
+  }
+}
