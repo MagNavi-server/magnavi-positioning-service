@@ -10,3 +10,8 @@ __pycache__/
 
 # Environment variables - 민감 정보 파일 (필수!)
 .env
+
+# gRPC 통신 코드 생성 전용 환경과 자동 생성물
+/build/grpc-venv/
+/build/generated/
+/build/streaming-venv/

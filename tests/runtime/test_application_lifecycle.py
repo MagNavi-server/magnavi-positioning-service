@@ -12,7 +12,7 @@ from fastapi import APIRouter
 ROOT = Path(__file__).resolve().parents[2]
 sys.path.insert(0, str(ROOT))
 
-from routers import prediction_router
+from routers import health_router, prediction_router
 from services import legacy_prediction_service, model_service
 from services.prediction_errors import ModelPreparationError
 
@@ -34,7 +34,7 @@ class ApplicationLifecycleTests(unittest.IsolatedAsyncioTestCase):
         for name in ("favorites_router", "locations_router", "user_router", "outdoor_places_router"):
             setattr(router_package, name, SimpleNamespace(router=APIRouter()))
         self.enterContext(patch.dict(sys.modules, {
-            "database": self.database, "routers": router_package,
+            "database": self.database, "routers": router_package, "routers.health_router": health_router,
         }))
         self.application = runpy.run_path(str(ROOT / "app.py"))["app"]
 

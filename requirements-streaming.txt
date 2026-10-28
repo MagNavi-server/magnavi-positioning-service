@@ -1,0 +1,4 @@
+# 기존 모델·HTTP 고정 버전과 gRPC를 같은 환경에서 실행한다.
+-r tests/session/requirements.txt
+grpcio==1.85.0
+protobuf==7.36.2

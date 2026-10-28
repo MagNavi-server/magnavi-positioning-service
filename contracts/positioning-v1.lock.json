@@ -1,0 +1,12 @@
+{
+  "source_repository": "MagNavi-server/magnavi-api-service",
+  "source_path": "src/main/proto/magnavi/positioning/v1/positioning.proto",
+  "snapshot_path": "magnavi/positioning/v1/positioning.proto",
+  "sha256": "32594fc237e0443c9ddf38ee0593615acd6f3bf8c9a871d8232f567937ee95ac",
+  "contract_version": 2,
+  "service": "magnavi.positioning.v1.PositioningService",
+  "method": "PredictStream",
+  "source_base_commit": "058ca4b584fcd25ddff1ddf2de94ce092fe89475",
+  "source_commit": null,
+  "source_state": "local_uncommitted"
+}
