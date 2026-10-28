@@ -1,4 +1,13 @@
 # 🚀 MagNavi
+
+Python 서버의 모델 준비·입력 처리: [모델 준비·입력 검증·HTTP 오류 계약과 검증 안내](docs/troubleshooting/model-readiness-and-input-validation.md)(2026-10-27). 아래 프로젝트 소개의 과거 성능 수치는 이번 작업에서 재검증한 결과가 아니다.
+
+gRPC 구현·합성 입력 검증(2026-10-28): [계약 v2·실행·검증 안내](docs/api/GRPC_CONTRACT.md). 기존 모델의 첫 샘플 예측을 유지하고 측정별 세션·자원 한도·준비 상태를 연결했다. 실제 센서·운영 TLS·배포·부하 측정은 후속이다.
+
+문서: [프로젝트 개요](PROJECT_OVERVIEW.md) · [구현 계획](IMPLEMENTATION_PLAN.md) · [커밋 규칙](docs/convention/commit-convention.md) · [브랜치·PR 규칙](docs/convention/branch-convention.md).
+
+게시 상태(2026-10-28): [기준 검증 PR #2](https://github.com/MagNavi-server/magnavi-positioning-service/pull/2), [추론 코어 PR #4](https://github.com/MagNavi-server/magnavi-positioning-service/pull/4), [gRPC PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)이 중앙 `develop`에 머지됐다. 대응 Spring 계약 v2는 아직 Spring 로컬 변경이며 별도 게시·전환이 필요하다. Python의 운영 배포는 수행하지 않았다.
+
 ### 지구자기장 기반 실내 통합 내비게이션 시스템
 
 > 실내에서도 GPS처럼 길을 찾을 수 있을까?  

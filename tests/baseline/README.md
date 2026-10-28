@@ -19,7 +19,7 @@
 
 기준을 처음 확보할 때 모델 6개와 기존 추론 코드, 최상위 requirements.txt는 변경하지 않았다.
 기준 코드의 Git HEAD는 `d82ac754b69496f6921e9954b0ea1d1dd373a0d0`이며, 실제 읽은
-소스의 SHA-256도 기준 파일에 남겼다. 기준 자료는 선행 PR #2에 포함됐고 이번에는 호출부를 세션 API로 연결한다.
+소스의 SHA-256도 기준 파일에 남겼다. 기준 파일은 [PR #2](https://github.com/MagNavi-server/magnavi-positioning-service/pull/2), 세션·모델 수명 호출부는 [PR #4](https://github.com/MagNavi-server/magnavi-positioning-service/pull/4)로 중앙 `develop`에 반영했다.
 SHA-256은 파일의 내용이 바뀌었는지 식별하는 값이다.
 
 ## 2. 입력과 실행 방법
@@ -133,7 +133,7 @@ Linux/EC2 환경, 여러 사용자 동시 처리, gRPC·HTTP 응답, 부하 성�
 ASGI 호출로 수행했다. 실제 네트워크 서버·업무 DB·gRPC·부하 검증은 수행하지 않았다.
 실행 방법과 기존 HTTP 공유 세션의 제약은 [트러블슈팅 기록](../../docs/troubleshooting/session-buffer-isolation.md)에 정리했다.
 
-관련 계획: 후속 설계 문서의 Python 구현 계획의 기준 결과 확보 항목.
+관련 계획: [Python 구현 계획](../../IMPLEMENTATION_PLAN.md)의 기준 결과 확보 항목.
 
 ## 7. 모델 준비·입력 검증 후 재검증(2026-10-27)
 
@@ -145,3 +145,7 @@ ASGI 호출로 수행했다. 실제 네트워크 서버·업무 DB·gRPC·부하
 현재 시작 검증에서는 버전 경고 4회·연산 경고 384회·특성 이름 경고 16회,
 144개 사례 실행에서는 연산 경고 3,456회·특성 이름 경고 144회가 관찰됐다.
 버전 경고가 사례 출력에서 빠진 것은 로딩 시점이 분리됐기 때문이며 해결됐다는 뜻이 아니다.
+
+## 8. 실제 gRPC 연결 후 재검증(2026-10-28)
+
+[PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)에서 전체 Python 76개와 실제 Java→Python 통합 테스트 1개를 통과했다. 첫 샘플을 포함한 합성 입력 144개의 기존 코드·후보·점수를 유지했다. 기준 결과와 입력 파일은 재생성하지 않았다. 실행 방법·검증 범위·Spring 게시 상태는 [gRPC 계약 문서](../../docs/api/GRPC_CONTRACT.md)를 따른다. 성능 개선 수치는 측정하지 않았다.
