@@ -111,48 +111,57 @@ def normalize_candidates(candidates):
 
 
 def run_cases(cases):
-    """DB·HTTP 앱 없이 변경 전 모델을 호출하고 사례마다 전역 버퍼를 비운다."""
+    """DB·HTTP 앱을 불러오지 않고 기존 모델로 각 입력 시퀀스를 단독 실행한다."""
     sys.path.insert(0, str(ROOT))
-    # 기존 모델은 import 때 파일을 읽는다. app·database·routers는 불러오지 않는다.
+    # 의존성·파일 확인 뒤 모델을 명시적으로 준비한다. import만으로는 파일을 읽지 않는다.
+    # app.py와 routers는 import하지 않아 DB 초기화와 센서 운영 로그를 피한다.
     with warnings.catch_warnings(record=True) as caught:
         warnings.simplefilter("always")
         with contextlib.redirect_stdout(io.StringIO()):
             from services import model_service
             from schemas.prediction import SensorInput
-        if not model_service.MODEL_LOADED:
-            raise RuntimeError("기준 결과를 비교할 모델이 준비되지 않았습니다.")
-        results = []
-        window_size = int(model_service.PREPROC_PARAMS["window_size"])
-        for case in cases:
-            if len(case["samples"]) <= window_size:
-                raise ValueError("각 사례에는 윈도우가 찬 다음 샘플까지 필요합니다.")
-            for buffer in model_service.BUFFERS.values():
-                buffer.clear()
-            samples = []
-            try:
-                for values in case["samples"]:
-                    data = SensorInput(**dict(zip(FIELDS, values, strict=True)))
-                    prediction, logging_candidates, candidates = model_service.run_prediction(data)
-                    samples.append({
-                        "prediction": None if prediction is None else int(prediction),
-                        "logging_candidates": normalize_candidates(logging_candidates),
-                        "candidates": normalize_candidates(candidates),
-                        "buffered_count": min(len(buffer) for buffer in model_service.BUFFERS.values()),
-                    })
-            finally:
-                # 실패한 사례의 이력도 다른 사례의 기준 결과에 섞이지 않도록 지운다.
-                for buffer in model_service.BUFFERS.values():
-                    buffer.clear()
-            results.append({"id": case["id"], "samples": samples})
-        params = dict(model_service.PREPROC_PARAMS)
-        fixed_sigma_loaded = model_service.FIXED_SIGMA is not None
+        model_service.initialize_model()
+        try:
+            model_status = model_service.get_model_status()
+
+            results = []
+            for case in cases:
+                window_size = int(model_status["preprocessing"]["window_size"])
+                if len(case["samples"]) <= window_size:
+                    raise ValueError("각 사례에는 윈도우가 찬 다음 샘플까지 필요합니다.")
+                # 기준 파일의 예상값은 유지하고 실행 어댑터만 명시적 세션에 연결한다.
+                session = model_service.create_prediction_session()
+                samples = []
+                try:
+                    for values in case["samples"]:
+                        data = SensorInput(**dict(zip(FIELDS, values, strict=True)))
+                        prediction, logging_candidates, candidates = model_service.run_prediction(data, session)
+                        samples.append({
+                            "prediction": None if prediction is None else int(prediction),
+                            "logging_candidates": normalize_candidates(logging_candidates),
+                            "candidates": normalize_candidates(candidates),
+                            "buffered_count": session.buffered_count,
+                        })
+                finally:
+                    # 실패한 사례의 센서 이력도 다음 사례에 남기지 않는다.
+                    session.close()
+                results.append({"id": case["id"], "samples": samples})
+
+            params = dict(model_status["preprocessing"])
+            fixed_sigma_loaded = model_status["fixed_sigma_loaded"]
+        finally:
+            model_service.shutdown_model()
 
     counts = Counter((type(item.message).__name__, str(item.message)) for item in caught)
     warning_summary = [
         {"category": category, "message": message, "count": count}
         for (category, message), count in sorted(counts.items())
     ]
-    return {"preprocessing": params, "fixed_sigma_loaded": fixed_sigma_loaded, "cases": results}, warning_summary
+    return {
+        "preprocessing": params,
+        "fixed_sigma_loaded": fixed_sigma_loaded,
+        "cases": results,
+    }, warning_summary
 
 
 def compare(expected, actual, path="result"):

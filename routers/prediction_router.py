@@ -1,56 +1,72 @@
-# -*- coding: utf-8 -*-
-from fastapi import APIRouter
+"""기존 HTTP 예측 형식을 유지하면서 입력·준비·계산 실패를 구분한다."""
+
+import logging
+
+from fastapi import APIRouter, HTTPException, Request, Response, status
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
+from fastapi.routing import APIRoute
+
 import schemas
-from services import run_prediction, MODEL_LOADED
+from services import run_legacy_prediction
+from services.prediction_errors import InvalidSensorInputError, ModelNotReadyError, PredictionFailedError
+from services.prediction_session import PredictionSessionClosedError
 
-# 새로운 APIRouter 객체를 생성합니다.
-router = APIRouter()
 
-# 데코레이터를 @app.post에서 @router.post로 변경합니다.
+logger = logging.getLogger(__name__)
+
+
+class PredictionRoute(APIRoute):
+    """예측 입력 오류만 안전하게 직렬화하고 다른 업무 API의 오류 처리는 유지한다."""
+
+    def get_route_handler(self):
+        """NaN·무한대 원본을 오류 응답에 다시 넣어 JSON 직렬화가 실패하지 않게 한다."""
+        original_handler = super().get_route_handler()
+
+        async def handle(request: Request):
+            """필드 위치·오류 종류만 전달하고 센서 원본과 내부 검증 문맥을 제외한다."""
+            try:
+                return await original_handler(request)
+            except RequestValidationError as exc:
+                errors = [{key: error[key] for key in ("type", "loc", "msg")} for error in exc.errors()]
+                return JSONResponse(status_code=status.HTTP_422_UNPROCESSABLE_ENTITY, content={"detail": errors})
+
+        return handle
+
+
+router = APIRouter(route_class=PredictionRoute)
+
+
 @router.post("/predict", response_model=schemas.ModelOutput, summary="센서 데이터로 위치 예측")
-def predict(data: schemas.SensorInput):
-    """
-    센서 데이터를 받아 위치를 예측합니다.
-    """
-    if not MODEL_LOADED:
+def predict(data: schemas.SensorInput, response: Response):
+    """정상 결과 필드를 유지하고 미준비·워밍업·입력·계산 실패의 HTTP 상태를 구분한다."""
+    try:
+        # 측정 식별자가 없는 기존 HTTP 경로의 공유 세션 제약은 계속 남아 있다.
+        prediction_result, log_results, response_results = run_legacy_prediction(data)
+    except (ModelNotReadyError, PredictionSessionClosedError):
+        response.status_code = status.HTTP_503_SERVICE_UNAVAILABLE
         return schemas.ModelOutput(
             prediction=-1, confidence=0.0,
-            top_k_results=["Error: Model components are not loaded.", "", ""]
+            top_k_results=["Error: Model components are not loaded.", "", ""],
         )
+    except InvalidSensorInputError:
+        raise HTTPException(status_code=422, detail="Sensor values cannot be processed as finite numbers.") from None
+    except PredictionFailedError:
+        # 예외 원문·센서·위치 후보를 로그나 응답에 노출하지 않는다.
+        logger.error("prediction_failed")
+        raise HTTPException(status_code=500, detail="Prediction failed.") from None
 
-    prediction_result, log_results, response_results = run_prediction(data)
-    
-    if prediction_result is None:#웨이브렛 적용시 필요한 코드
-        # 서버는 아직 예측할 준비가 안됨 (Warmup 중)
-        # 클라이언트에게는 "아직 처리 중"이라는 의미로 202 Accepted 상태 코드를 보낼 수 있습니다.
+    if prediction_result is None:
         response.status_code = status.HTTP_202_ACCEPTED
         return schemas.ModelOutput(
-            prediction=-2, # -2는 '워밍업 중'을 의미하는 코드로 약속
-            confidence=0.0,
-            top_k_results=["Status: Model is warming up. Please wait.", "", ""]
+            prediction=-2, confidence=0.0,
+            top_k_results=["Status: Model is warming up. Please wait.", "", ""],
         )
 
-
-
-    # 로깅 및 응답 구성 로직은 기존과 동일합니다.
-    input_str = (
-        f"Input: Mag({data.Mag_X:.2f}, {data.Mag_Y:.2f}, {data.Mag_Z:.2f}), "
-        f"Ori({data.Ori_X:.2f}, {data.Ori_Y:.2f}, {data.Ori_Z:.2f})"
-    )
-    results_str = " | ".join([f"{i+1}st: {p} ({c:.2%})" for i, (p, c) in enumerate(log_results)]) if log_results else f"Prediction: {prediction_result}"
-    
-    # logging.info()는 app.py에서 전역으로 설정했으므로 여기서 바로 사용 가능합니다.
-    # import logging을 추가해도 좋습니다.
-    import logging
-    logging.info(f"{input_str} -> {results_str}")
-
     confidence_score = log_results[0][1] if log_results else None
-    top_k_list = [f"{p} ({c:.4f})" for p, c in response_results] if response_results else []
+    top_k_list = [f"{code} ({score:.4f})" for code, score in response_results]
     while len(top_k_list) < 3:
         top_k_list.append("")
-
     return schemas.ModelOutput(
-        prediction=prediction_result,
-        confidence=confidence_score,
-        top_k_results=top_k_list
+        prediction=prediction_result, confidence=confidence_score, top_k_results=top_k_list,
     )
