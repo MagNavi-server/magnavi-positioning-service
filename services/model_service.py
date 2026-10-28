@@ -35,6 +35,11 @@ def get_model_status() -> dict:
     return _runtime.status()
 
 
+def get_model_runtime() -> ModelRuntime:
+    """HTTP와 gRPC 수명 관리가 동일한 모델·세션 소유자를 사용하게 한다."""
+    return _runtime
+
+
 def create_prediction_session() -> PredictionSession:
     """준비된 모델의 윈도우 크기로 측정 연결 하나에 쓸 빈 세션을 생성한다."""
     return _runtime.create_session()

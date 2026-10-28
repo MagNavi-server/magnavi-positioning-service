@@ -144,3 +144,21 @@ class ModelRuntime:
                 "fixed_sigma_loaded": bool(self._bundle and self._bundle.fixed_sigma is not None),
                 "startup_warnings": [dict(item) for item in self._startup_warnings],
             }
+
+    def streaming_location_codes(self) -> frozenset[str]:
+        """등록된 모델이 즉시 예측과 손실 없는 정수→문자열 코드 변환을 지원하는지 확인한다."""
+        with self._state_lock:
+            bundle = self._require_ready()
+            if bundle.preprocessing["window_size"] != 16 or bundle.preprocessing["warmup_policy"] != "pad":
+                raise ModelPreparationError("스트리밍 계약은 윈도우 16과 pad 정책을 요구합니다.")
+            codes = set()
+            for label in bundle.components["label_encoder"].classes_:
+                raw = str(label).split("_")[0]
+                try:
+                    canonical = str(int(raw))
+                except ValueError:
+                    raise ModelPreparationError("정수 위치 코드로 표현할 수 없는 모델입니다.") from None
+                if canonical != raw or len(raw) > 50:
+                    raise ModelPreparationError("위치 코드의 문자열 표현이 보존되지 않습니다.")
+                codes.add(raw)
+            return frozenset(codes)

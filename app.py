@@ -5,6 +5,7 @@ from database import engine, Base
 # 새로 만든 prediction_router를 임포트 목록에 추가합니다.
 from routers import favorites_router, locations_router, user_router, prediction_router, outdoor_places_router
 from services.model_lifecycle import model_lifespan
+from routers.health_router import router as health_router
 
 logging.basicConfig(level=logging.INFO, format='%(levelname)s:     %(message)s')
 
@@ -30,6 +31,7 @@ app.include_router(favorites_router.router, prefix="/favorites", tags=["favorite
 app.include_router(locations_router.router, prefix="/locations", tags=["Predicted Locations"])
 # 새로 만든 예측 라우터를 등록합니다. prefix가 없으므로 경로가 바로 /predict가 됩니다.
 app.include_router(prediction_router.router, tags=["Prediction"])
+app.include_router(health_router, tags=["Health"])
 
 # @app.post("/predict") ... 로 시작하던 긴 함수 블록 전체가 삭제됩니다.
 

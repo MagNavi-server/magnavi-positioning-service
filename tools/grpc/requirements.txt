@@ -1,0 +1,6 @@
+# 통신 코드 생성·계약 검사 전용. 기존 모델 검증 환경과 분리해서 설치한다.
+grpcio==1.85.0
+grpcio-tools==1.85.0
+protobuf==7.36.2
+setuptools==80.9.0
+typing_extensions==4.14.0

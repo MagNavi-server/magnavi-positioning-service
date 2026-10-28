@@ -1,0 +1,18 @@
+{
+  "model_key": "magnavi-local-synthetic",
+  "model_version": "baseline-20261015",
+  "sensor_profile_id": "synthetic-v1",
+  "model_sha256": {
+    "mlp_model_6input.pkl": "4f762c1d5c6ccbd69ed8bc02d27e8a8636f5104a45feef147ba5680fc560fe16",
+    "scaler.pkl": "29d55b51a8875cad4badc89e2fe213a470be6ae7528cf58808cc06ff129ddd5d",
+    "label_encoder_6input.pkl": "7d4391b27af3b98db2c2db506df068b3e6d1ef66e16de2fb5a21aa250aff2b12",
+    "soft_iron_matrix.pkl": "0c1dca43417cc83c53fc03be064933cc33384ecd5595427f638128a4f1a56adf",
+    "bias.pkl": "c4d6897da6681067213527e43573a7c844773c577bcfad7985d166b18065d0e9",
+    "preproc_params.pkl": "c423b7c267e5eda3aec59f2321f4d47fb8e39560d30c239e1235848f92480b28"
+  },
+  "host": "127.0.0.1",
+  "port": 50051,
+  "workers": 1,
+  "pending_jobs": 8,
+  "max_streams": 8
+}
