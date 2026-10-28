@@ -1,6 +1,6 @@
 # 첫 예측 시점 불일치와 Spring–Python 계약 통일
 
-구현·검증일: 2026-10-28 (한국 시간). 로컬 구현의 검증 기록이며 운영 장애·배포 사례는 아니다. Python 코드는 이번 PR로 게시하고 Spring 대응 변경은 별도 게시가 필요하다.
+구현·검증일: 2026-10-28 (한국 시간). Python은 [PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)으로 중앙 `develop`에 반영했다. 대응 Spring 변경은 아직 로컬 미커밋이며 운영 장애·배포 사례는 아니다.
 
 ## 문제와 확인된 원인
 
@@ -70,4 +70,4 @@ Spring 전체 명령은 `MAGNAVI_PYTHON_ROOT`에 Python 저장소 절대 경로�
 참고: [계약·실행](../api/GRPC_CONTRACT.md), [서버](../../positioning/server.py),
 [작업자](../../positioning/worker.py), [gRPC 검증](../../tests/streaming/test_streaming.py),
 [기준 결과 안내](../../tests/baseline/README.md). Spring 관련 파일은 같은 작업의 로컬 저장소에 있으며
-Spring 변경은 아직 로컬 미커밋 상태다. Python 게시 이력은 이 문서를 포함한 PR을 따른다. 배포는 수행하지 않았다.
+Spring 새 커밋·PR 링크는 아직 없다. Python 구현은 [커밋 c41e0a8](https://github.com/MagNavi-server/magnavi-positioning-service/commit/c41e0a86d6c2b407f91b1230a191eee487096a15)로 반영했고 배포는 수행하지 않았다.

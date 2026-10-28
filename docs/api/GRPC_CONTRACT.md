@@ -4,7 +4,7 @@
 
 기존 Python의 `pad` 전처리와 첫 샘플 예측을 유지하고 Spring도 같은 응답을 받도록
 계약 버전을 2로 변경했다. Python 실제 모델·스트림별 세션·자원 한도를 연결했다.
-운영 센서 규격·TLS·배포·부하 측정은 후속이다. Python 변경은 이 PR에 포함하며 대응하는 Spring 변경은 아직 로컬 미커밋 상태다.
+Python 구현은 [PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)으로 중앙 `develop`에 반영했다. 대응 Spring 변경은 아직 로컬 미커밋이며 별도 게시가 필요하다. 운영 센서 규격·TLS·배포·부하 측정은 후속이다.
 
 ## 1. 단일 원본과 버전 전환
 

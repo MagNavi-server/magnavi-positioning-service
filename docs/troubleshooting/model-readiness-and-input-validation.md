@@ -1,6 +1,8 @@
 # 모델 준비 상태와 센서 입력·오류 처리 보완
 
-작업일: 2026-10-27(한국 시간) · 대상: Python · 로컬 구현·검증 완료, 미커밋·미배포
+작업일: 2026-10-27(한국 시간) · 대상: Python · 로컬 구현·검증 완료, 2026-10-28 [PR #4](https://github.com/MagNavi-server/magnavi-positioning-service/pull/4) 머지, 미배포
+
+게시·후속 상태(2026-10-28): [PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)에서 실제 gRPC 연결까지 구현·검증했다. 아래 검증과 남은 작업은 해당 구현일의 기록이며, 현재 범위는 [구현 계획](../../IMPLEMENTATION_PLAN.md)과 [gRPC 검증 기록](grpc-first-prediction.md)을 따른다.
 
 ## 문제와 변경
 
