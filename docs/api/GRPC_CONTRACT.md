@@ -4,7 +4,8 @@
 
 기존 Python의 `pad` 전처리와 첫 샘플 예측을 유지하고 Spring도 같은 응답을 받도록
 계약 버전을 2로 변경했다. Python 실제 모델·스트림별 세션·자원 한도를 연결했다.
-Python 구현은 [PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)으로 중앙 `develop`에 반영했다. 대응 Spring 변경은 아직 로컬 미커밋이며 별도 게시가 필요하다. 운영 센서 규격·TLS·배포·부하 측정은 후속이다.
+Python 구현은 [PR #6](https://github.com/MagNavi-server/magnavi-positioning-service/pull/6)으로 중앙 `develop`에 반영했다. 대응 Spring 변경은 [PR #31](https://github.com/MagNavi-server/magnavi-api-service/pull/31)로 중앙 `develop`에 반영했다.
+2026-10-28에 Spring 머지 커밋과 Python 사본의 내용·해시가 같음을 확인하고 계약 출처를 고정했다. 운영 센서 규격·TLS·배포·부하 측정은 후속이다.
 
 ## 1. 단일 원본과 버전 전환
 
@@ -12,9 +13,9 @@ Python 구현은 [PR #6](https://github.com/MagNavi-server/magnavi-positioning-s
 |---|---|
 | 원본 저장소·경로 | `MagNavi-server/magnavi-api-service`의 `src/main/proto/magnavi/positioning/v1/positioning.proto` |
 | 이전 원본 커밋 | `058ca4b584fcd25ddff1ddf2de94ce092fe89475` |
-| 이번 원본 | 위 계약에서 수정한 Spring 로컬 파일. 새 커밋은 아직 없음 |
+| 이번 원본 | Spring PR #31의 머지 커밋 [`b4a1cadf32bfd64d2a61d75967454334054ab9b5`](https://github.com/MagNavi-server/magnavi-api-service/blob/b4a1cadf32bfd64d2a61d75967454334054ab9b5/src/main/proto/magnavi/positioning/v1/positioning.proto) |
 | Python 빌드 사본 | [positioning.proto](../../contracts/magnavi/positioning/v1/positioning.proto) |
-| 출처·해시 | [positioning-v1.lock.json](../../contracts/positioning-v1.lock.json), `source_state=local_uncommitted`, `source_commit=null` |
+| 출처·해시 | [positioning-v1.lock.json](../../contracts/positioning-v1.lock.json), `source_state=committed`, `source_commit`은 위 머지 커밋 |
 | SHA-256 | `32594fc237e0443c9ddf38ee0593615acd6f3bf8c9a871d8232f567937ee95ac` |
 | 서비스 경로 | `magnavi.positioning.v1.PositioningService/PredictStream` |
 | 동작 계약 버전 | `contract_version=2` |
@@ -28,7 +29,11 @@ Spring WebSocket의 `start`·`ready`도 `contractVersion=2`다. 학습 모델 �
 앱의 WebSocket v2 적용·센서 확인 → 운영 활성화다. 기존 v1과 자동 호환되지 않는다.
 앱·운영 설정은 이번에 변경하지 않았으며 Spring 기능은 기본 비활성이다.
 Python 사본을 독자적으로 수정하지 않고 Spring 원본과 함께 갱신한다.
-Spring 계약 커밋이 게시된 뒤 해당 실제 커밋을 lock에 기록해야 한다. 해시는 변경 감지이며 서명 검증이 아니다.
+Spring 원본을 새로 반영할 때는 해당 커밋과 사본의 해시를 lock에 함께 기록한다.
+`source_state=committed`는 Spring 원본이 GitHub에 커밋됐다는 뜻이다.
+`source_base_commit`은 계약 v2 변경 전 원본을 추적하기 위해 보존한다.
+이번 변경은 출처 기록 갱신이며 통신 규격·해시는 변경하지 않았다.
+해시는 변경 감지이며 서명 검증이 아니다.
 
 ## 2. 요청·응답 규칙
 
